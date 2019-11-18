@@ -10,7 +10,7 @@ import java.util.Arrays;
 /* import java.io.File; */
 
 
-public class Menus extends JPanel {
+public class Menus {
     private JFrame frame=new JFrame();
     private String [] gameNames;
     private GameLauncher [] gameLaunchers;
@@ -25,8 +25,6 @@ public class Menus extends JPanel {
     private static boolean [] visibilities ;
 
 
-
-
     public Menus() {
         //frame.setVisible(true);
         frame.setSize(WIDTH,HEIGHT);
@@ -38,23 +36,26 @@ public class Menus extends JPanel {
         visibilities=new boolean[gameCount];
         Arrays.fill(visibilities,true);
 
-            for(int i = 0; i< gameCount; i++){
-                gameNames[i]=new DirReader().getDirNames().get(i);
-                try {
+        for(int i = 0; i< gameCount; i++){
+            gameNames[i]=new DirReader().getDirNames().get(i);
+            try {
+
                 URLClassLoader loader=URLClassLoader.newInstance(new URL[]{new URL(new DirReader().getDirNames().get(i))});
+                Class c=loader.loadClass(gameNames[i]);
                 gameLaunchers[i]=(GameLauncher) loader;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             }
+         // make frame visible
 
 
     }
 
 
     public void mainMenu() {
-
+        //JPanel panel = new JPanel();
         JPanel panel = commonElements("Solitaire Pro");
 
         /* Set up menu buttons*/
@@ -92,7 +93,7 @@ public class Menus extends JPanel {
         panel.add(Box.createVerticalGlue());
 
         frame.add(panel); // add full panel to frame
-        frame.setVisible(true); // make frame visible
+        frame.setVisible(true);
 
         /*
          Test line
@@ -102,7 +103,8 @@ public class Menus extends JPanel {
     } // End of mainMenu method
 
     public void optionsMenu() {
-        JPanel panel = commonElements("Options");
+        JPanel panel = new JPanel();
+        panel = commonElements("Options");
 
         /*Set up labels and select boxes for game */
         String [] GameNames=new String[]{"Bonanza Creek","Betsy Ross","Binary Star"}; // create an array for the name
@@ -133,10 +135,12 @@ public class Menus extends JPanel {
 
         frame.add(panel);
         frame.setVisible(true);
+
     }// end of Main menu method
 
     private void gameMenu(String gameName) {
-        JPanel panel = commonElements(gameName);
+        JPanel panel = new JPanel();
+        panel= commonElements("gameName");
 
         String[] ButtonTitles = new String[]{"New Game", "Continue Game"}; // create an array for the name
         JButton[] gameMenuButtons = new JButton[ButtonTitles.length]; //create array of menu buttons
@@ -146,13 +150,14 @@ public class Menus extends JPanel {
             gameMenuButtons[i].setPreferredSize(new Dimension(ELEMENT_WIDTH, ELEMENT_HEIGHT));
             gameMenuButtons[i].setFont(font);
             GameLauncher thisLauncher=gameLaunchers[i];
-            gameMenuButtons[i].addActionListener((ActionEvent e)->{
+            gameMenuButtons[i].addActionListener((ActionEvent a)->{
                 thisLauncher.startGame(null);
 
             });
             panel.add(Box.createVerticalStrut(STRUT_SIZE)); // adds the strut for the buttons
             panel.add(gameMenuButtons[i]); // adds the button
         }
+
 
 
 
@@ -198,11 +203,13 @@ public class Menus extends JPanel {
         frame.add(panel);
         frame.setVisible(true);
 
+
     } // End of gameMenu method
 
     public JPanel commonElements(String menuTitle) {
         /* Instantiate the JPanel for the main menu*/
-        JPanel panel = new JPanel();
+        JPanel panel=new JPanel();
+
 
         /* Set the layout for the main menu JPanel*/
         BoxLayout layout = new BoxLayout(panel, BoxLayout.PAGE_AXIS);
